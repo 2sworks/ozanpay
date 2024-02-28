@@ -5,14 +5,8 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"ozanpay/config"
 	"ozanpay/model"
-)
-
-const (
-	HOST     = "localhost"
-	DATABASE = "ozanpay"
-	USER     = "ozanpay"
-	PASSWORD = "ozanpay2024!!!"
 )
 
 var db *gorm.DB
@@ -21,8 +15,8 @@ func DB() *gorm.DB {
 	return db
 }
 
-func Connect() {
-	vt := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", HOST, USER, PASSWORD, DATABASE)
+func Connect(cfg config.DbConfig) {
+	vt := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", cfg.Host, cfg.Username, cfg.Password, cfg.Name)
 	var err error
 	db, err = gorm.Open(postgres.Open(vt), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{SingularTable: true},
@@ -39,7 +33,7 @@ func Migrate() {
 	db.AutoMigrate(model.Seller{})
 	db.AutoMigrate(model.Organization{})
 }
-func ConnectAndMigrate() {
-	Connect()
+func ConnectAndMigrate(cfg config.DbConfig) {
+	Connect(cfg)
 	Migrate()
 }
